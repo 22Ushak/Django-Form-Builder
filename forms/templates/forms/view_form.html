@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ form.title }}</title>
+    <!-- Load static files -->
+    {% load static %}
+    <!-- Link the CSS file -->
+    <link rel="stylesheet" href="{% static 'forms/style.css' %}">
+</head>
+<body>
+    <h1>{{ form.title }}</h1>
+    <p>{{ form.description }}</p>
+    <a href="{% url 'submit_response' form.id %}">Submit Response</a>
+    <a href="{% url 'view_responses' form.id %}">View Responses</a>
+</body>
+</html>

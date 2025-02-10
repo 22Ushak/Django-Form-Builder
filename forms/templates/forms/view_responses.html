@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Responses for {{ form.title }}</title>
+    <!-- Load static files -->
+    {% load static %}
+    <!-- Link the CSS file -->
+    <link rel="stylesheet" href="{% static 'forms/style.css' %}">
+</head>
+<body>
+    <h1>Responses for {{ form.title }}</h1>
+    {% for response in responses %}
+        <h2>Response by {{ response.respondent_name }}</h2>
+        <ul>
+            {% for answer in response.answers.all %}
+                <li>{{ answer.question.text }}: {{ answer.answer_text }}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+</body>
+</html>

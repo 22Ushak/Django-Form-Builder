@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Form</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'forms/style.css' %}">
+    <script>
+        let questionCount = 0;
+
+            function addQuestion() {
+            const container = document.getElementById('questions-container');
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question';
+            const currentIndex = questionCount;
+            questionCount++;
+            
+            questionDiv.innerHTML = `
+                <input type="hidden" name="question_index" value="${currentIndex}">
+                <label>Question Text:</label>
+                <input type="text" name="question_text" required>
+                <label>Question Type:</label>
+                <select name="question_type" onchange="toggleOptions(this)">
+                    <option value="text">Text</option>
+                    <option value="integer">Integer</option>
+                    <option value="mcq_single">Multiple Choice (Single Correct)</option>
+                    <option value="mcq_multiple">Multiple Choice (Multiple Correct)</option>
+                </select>
+                <div class="options" style="display: none;">
+                    <label>Options (comma-separated):</label>
+                    <input type="text" name="options">
+                </div>
+                <label>
+                    <input type="checkbox" name="required"> Required
+                </label>
+                <div class="conditional-section">
+                    <label>Parent Question:</label>
+                    <select name="parent_question" class="parent-select">
+                        <option value="">None</option>
+                        ${Array.from({ length: currentIndex }, (_, i) => `
+                            <option value="${i}">Question ${i + 1}</option>
+                        `).join('')}
+                    </select>
+                    <label>Trigger Answer:</label>
+                    <input type="text" name="trigger_answer">
+                </div>
+                <hr>
+            `;
+
+            container.appendChild(questionDiv);
+            toggleOptions(questionDiv.querySelector('select[name="question_type"]'));
+}
+
+            function toggleOptions(select) {
+            const optionsDiv = select.parentElement.querySelector('.options');
+            optionsDiv.style.display = select.value.startsWith('mcq') ? 'block' : 'none';
+}
+    </script>
+</head>
+<body>
+    <h1>Create Form</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required>
+        <br>
+        <label for="description">Description:</label>
+        <textarea id="description" name="description"></textarea>
+        <br>
+        <h2>Questions</h2>
+        <div id="questions-container"></div>
+        <button type="button" onclick="addQuestion()">Add Question</button>
+        <br><br>
+        <button type="submit">Create Form</button>
+    </form>
+</body>
+</html>

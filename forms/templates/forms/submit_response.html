@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Submit Response</title>
+    {% load static %}
+    {% load custom_filters %}
+    <link rel="stylesheet" href="{% static 'forms/style.css' %}">
+</head>
+<body>
+    <h1>{{ form.title }}</h1>
+    <p>{{ form.description }}</p>
+    <form method="post">
+        {% csrf_token %}
+        {% comment %} <label for="respondent_name">Your Name:</label>
+        <input type="text" id="respondent_name" name="respondent_name">
+        <br><br> {% endcomment %}
+
+        <label for="respondent_email">Your Email:</label>
+        <input type="email" id="respondent_email" name="respondent_email" required>
+        <br>
+
+        {% for question in form.questions.all %}
+            <div class="question {% if question.parent_question %}conditional-question{% else %}parent-question{% endif %}"
+                 data-question-id="{{ question.id }}"
+                 {% if question.parent_question %}
+                     data-parent-question-id="{{ question.parent_question.id }}"
+                     data-trigger-answer="{{ question.trigger_answer }}"
+                 {% endif %}>
+                <label>{{ question.text }}{% if question.required %}*{% endif %}</label>
+                <br>
+
+                {% if question.question_type == 'text' %}
+                    <input type="text" name="question_{{ question.id }}" {% if question.required %}required{% endif %}>
+                {% elif question.question_type == 'integer' %}
+                    <input type="number" name="question_{{ question.id }}" {% if question.required %}required{% endif %}>
+                {% elif question.question_type == 'mcq_single' %}
+                    {% if question.options %}
+                        {% for option in question.options|split:',' %}
+                            <input type="radio" name="question_{{ question.id }}" value="{{ option }}" {% if question.required %}required{% endif %}> {{ option }}<br>
+                        {% endfor %}
+                    {% else %}
+                        <p>No options provided for this question.</p>
+                    {% endif %}
+                {% elif question.question_type == 'mcq_multiple' %}
+                    {% if question.options %}
+                        {% for option in question.options|split:',' %}
+                            <input type="checkbox" name="question_{{ question.id }}" value="{{ option }}"> {{ option }}<br>
+                        {% endfor %}
+                    {% else %}
+                        <p>No options provided for this question.</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <hr>
+        {% endfor %}
+
+        <button type="submit">Submit Response</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hide conditional questions initially
+            document.querySelectorAll('.conditional-question').forEach(question => {
+                question.style.display = 'none';
+            });
+
+            // Add event listeners to parent questions
+            document.querySelectorAll('.parent-question input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const parentQuestionId = this.closest('.question').dataset.questionId;
+                    const selectedAnswer = this.value;
+
+                    // Show/hide child questions based on the answer
+                    document.querySelectorAll('.conditional-question').forEach(childQuestion => {
+                        const parentId = childQuestion.dataset.parentQuestionId;
+                        const triggerAnswer = childQuestion.dataset.triggerAnswer;
+
+                        if (parentId === parentQuestionId && triggerAnswer === selectedAnswer) {
+                            childQuestion.style.display = 'block';
+                        } else {
+                            childQuestion.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
