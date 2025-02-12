@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+    {% load static %}  <!-- Add this line -->
     <title>Create Form</title>
-    <link rel="stylesheet" href="{% static 'forms/style.css' %}">
+    <link rel="stylesheet" href="{% static 'forms/style.css' %}"> 
     <script>
         let questionCount = 0;
 
-            function addQuestion() {
+        function addQuestion() {
             const container = document.getElementById('questions-container');
             const questionDiv = document.createElement('div');
             questionDiv.className = 'question';
@@ -47,12 +48,12 @@
 
             container.appendChild(questionDiv);
             toggleOptions(questionDiv.querySelector('select[name="question_type"]'));
-}
+        }
 
-            function toggleOptions(select) {
+        function toggleOptions(select) {
             const optionsDiv = select.parentElement.querySelector('.options');
             optionsDiv.style.display = select.value.startsWith('mcq') ? 'block' : 'none';
-}
+        }
     </script>
 </head>
 <body>
