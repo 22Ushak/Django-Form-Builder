@@ -16,6 +16,19 @@
                 <li>{{ answer.question.text }}: {{ answer.answer_text }}</li>
             {% endfor %}
         </ul>
+        <hr>
+        {% if data.numbers %}
+            <p><strong>Numbers Entered:</strong> {{ data.numbers|join:", " }}</p>
+        {% endif %}
+        
+        <p><strong>Total:</strong> {{ total }}</p>
+        <p><strong>Average:</strong> {{ average }}</p> 
+        
+        
     {% endfor %}
+
+    
 </body>
-</html>
+</html> 
+
+

@@ -11,9 +11,6 @@
     <p>{{ form.description }}</p>
     <form method="post">
         {% csrf_token %}
-        {% comment %} <label for="respondent_name">Your Name:</label>
-        <input type="text" id="respondent_name" name="respondent_name">
-        <br><br> {% endcomment %}
 
         <label for="respondent_email">Your Email:</label>
         <input type="email" id="respondent_email" name="respondent_email" required>
@@ -85,5 +82,35 @@
             });
         });
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const numberInputs = document.querySelectorAll("input[type='number']");
+            const totalDisplay = document.getElementById("total");
+            const avgDisplay = document.getElementById("average");
+    
+            function calculateSumAndAvg() {
+                let sum = 0, count = 0;
+                numberInputs.forEach(input => {
+                    let val = parseFloat(input.value);
+                    if (!isNaN(val)) {
+                        sum += val;
+                        count++;
+                    }
+                });
+                let avg = count > 0 ? (sum / count).toFixed(2) : 0;
+                totalDisplay.textContent = `Total: ${sum}`;
+                avgDisplay.textContent = `Average: ${avg}`;
+            }
+    
+            numberInputs.forEach(input => {
+                input.addEventListener("input", calculateSumAndAvg);
+            });
+        });
+    </script>
+    
+    <p id="total">Total: 0</p>
+    <p id="average">Average: 0</p>
+
 </body>
 </html>

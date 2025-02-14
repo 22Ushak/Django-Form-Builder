@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Form, Question, Response, Answer
 
+
 def home(request):
     forms = Form.objects.all()
     return render(request, 'forms/home.html', {'forms': forms})
@@ -71,7 +72,25 @@ def submit_response(request, form_id):
 def view_responses(request, form_id):
     form = get_object_or_404(Form, id=form_id)
     responses = form.responses.all()
-    return render(request, 'forms/view_responses.html', {'form': form, 'responses': responses})
+    response_data = []
+    for response in responses:
+        total = 0
+        count = 0
+        numbers = []
+        for answer in response.answers.all():
+            if answer.question.question_type == 'integer' and answer.answer_text:
+                try:
+                    num = int(answer.answer_text)
+                    numbers.append(num)
+                    total += num
+                    count += 1
+                    
+                except ValueError:
+                    pass  # Ignore non-numeric values
+
+        avg = total / count if count > 0 else 0
+        response_data.append({'response': response, 'total': total, 'average': avg,'numbers':numbers})
+    return render(request, 'forms/view_responses.html', {'form': form, 'responses': responses,'total':total,'average':avg})
 
 def delete_form(request, form_id):
     if request.method == 'POST':
