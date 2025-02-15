@@ -2,33 +2,24 @@
 <html>
 <head>
     <title>Responses for {{ form.title }}</title>
-    <!-- Load static files -->
     {% load static %}
-    <!-- Link the CSS file -->
     <link rel="stylesheet" href="{% static 'forms/style.css' %}">
 </head>
 <body>
     <h1>Responses for {{ form.title }}</h1>
-    {% for response in responses %}
-        <h2>Response by {{ response.respondent_name }}</h2>
+    {% for data in response_data %}
+        <h2>Response by {{ data.response.respondent_name }}</h2>
         <ul>
-            {% for answer in response.answers.all %}
+            {% for answer in data.response.answers.all %}
                 <li>{{ answer.question.text }}: {{ answer.answer_text }}</li>
             {% endfor %}
         </ul>
         <hr>
         {% if data.numbers %}
-            <p><strong>Numbers Entered:</strong> {{ data.numbers|join:", " }}</p>
+            <p><strong>Numbers Included in Calculation:</strong> {{ data.numbers|join:", " }}</p>
+            <p><strong>Total:</strong> {{ data.total }}</p>
+            <p><strong>Average:</strong> {{ data.average|floatformat:2 }}</p>
         {% endif %}
-        
-        <p><strong>Total:</strong> {{ total }}</p>
-        <p><strong>Average:</strong> {{ average }}</p> 
-        
-        
     {% endfor %}
-
-    
 </body>
-</html> 
-
-
+</html>

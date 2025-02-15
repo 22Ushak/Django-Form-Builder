@@ -25,6 +25,15 @@
                     <option value="mcq_single">Multiple Choice (Single Correct)</option>
                     <option value="mcq_multiple">Multiple Choice (Multiple Correct)</option>
                 </select>
+
+                <div class="calc-option" style="display: none;">
+            <label>
+                <input type="checkbox" 
+                        name="include_in_calculations"
+                        value="${currentIndex}"> Include in totals/averages
+            </label>
+                </div>
+
                 <div class="options" style="display: none;">
                     <label>Options (comma-separated):</label>
                     <input type="text" name="options">
@@ -52,7 +61,16 @@
 
         function toggleOptions(select) {
             const optionsDiv = select.parentElement.querySelector('.options');
+            const calcDiv = select.parentElement.querySelector('.calc-option');
+            
+            // Clear checkbox when switching question types
+            const calcCheckbox = calcDiv.querySelector('input[type="checkbox"]');
+            if (calcCheckbox) {
+                calcCheckbox.checked = false;
+            }
+            
             optionsDiv.style.display = select.value.startsWith('mcq') ? 'block' : 'none';
+            calcDiv.style.display = select.value === 'integer' ? 'block' : 'none';
         }
     </script>
 </head>
@@ -73,4 +91,6 @@
         <button type="submit">Create Form</button>
     </form>
 </body>
-</html>
+</html> 
+
+

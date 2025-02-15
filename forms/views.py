@@ -19,6 +19,7 @@ def create_form(request):
         options_list = request.POST.getlist('options')
         parent_indices = request.POST.getlist('parent_question')
         trigger_answers = request.POST.getlist('trigger_answer')
+        include_in_calculation_list = request.POST.getlist('include_in_calculations')
 
         # Create all questions first
         questions = []
@@ -28,6 +29,13 @@ def create_form(request):
             question_type = question_types[i] if i < len(question_types) else 'text'
             required = required_fields[i] == 'on' if i < len(required_fields) else False
             options = options_list[i] if i < len(options_list) else ''
+            # Fix: Change how we check if the question should be included in calculations
+            include_in_calculations = str(i) in include_in_calculation_list
+
+            # Print debug information
+            # print(f"Question {i}: {question_text}")
+            # print(f"Include in calculations: {include_in_calculations}")
+            # print(f"Calculation list: {include_in_calculation_list}")
 
             question = Question.objects.create(
                 form=form,
@@ -35,8 +43,10 @@ def create_form(request):
                 question_type=question_type,
                 required=required,
                 options=options,
+                include_in_calculations=include_in_calculations
             )
             questions.append(question)
+        
 
         # Link parent questions (if any)
         for i in range(len(questions)):
@@ -73,27 +83,49 @@ def view_responses(request, form_id):
     form = get_object_or_404(Form, id=form_id)
     responses = form.responses.all()
     response_data = []
+    
     for response in responses:
         total = 0
         count = 0
         numbers = []
+        
         for answer in response.answers.all():
-            if answer.question.question_type == 'integer' and answer.answer_text:
+            # Add debug prints
+            # print(f"Processing answer for question: {answer.question.text}")
+            # print(f"Question type: {answer.question.question_type}")
+            # print(f"Include in calculations: {answer.question.include_in_calculations}")
+            # print(f"Answer text: {answer.answer_text}")
+            
+            if (answer.question.question_type == 'integer' and 
+                answer.question.include_in_calculations and 
+                answer.answer_text):
                 try:
                     num = int(answer.answer_text)
                     numbers.append(num)
                     total += num
                     count += 1
-                    
+                    print(f"Added to calculations: {num}")
                 except ValueError:
-                    pass  # Ignore non-numeric values
+                    print(f"Failed to convert to integer: {answer.answer_text}")
+                    pass
 
         avg = total / count if count > 0 else 0
-        response_data.append({'response': response, 'total': total, 'average': avg,'numbers':numbers})
-    return render(request, 'forms/view_responses.html', {'form': form, 'responses': responses,'total':total,'average':avg})
+        response_data.append({
+            'response': response,
+            'total': total,
+            'average': avg,
+            'numbers': numbers
+        })
+    
+    return render(request, 'forms/view_responses.html', {
+        'form': form,
+        'response_data': response_data
+    })
 
 def delete_form(request, form_id):
     if request.method == 'POST':
         form = get_object_or_404(Form, id=form_id)
         form.delete()
     return redirect('home')
+
+

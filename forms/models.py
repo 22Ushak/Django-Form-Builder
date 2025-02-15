@@ -21,6 +21,7 @@ class Question(models.Model):
     required = models.BooleanField(default=False)
     options = models.TextField(blank=True, null=True)
     # New fields for conditional questions
+    include_in_calculations = models.BooleanField(default=False, verbose_name="Include in totals/averages")
     parent_question = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='child_questions')
     trigger_answer = models.CharField(max_length=200, blank=True, null=True)  # Answer that triggers this question
 

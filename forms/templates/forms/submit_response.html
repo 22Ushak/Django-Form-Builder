@@ -19,6 +19,7 @@
         {% for question in form.questions.all %}
             <div class="question {% if question.parent_question %}conditional-question{% else %}parent-question{% endif %}"
                  data-question-id="{{ question.id }}"
+                 data-include-in-calculations="{{ question.include_in_calculations|lower }}"
                  {% if question.parent_question %}
                      data-parent-question-id="{{ question.parent_question.id }}"
                      data-trigger-answer="{{ question.trigger_answer }}"
@@ -85,24 +86,31 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Select only number inputs that are marked for inclusion in calculations
             const numberInputs = document.querySelectorAll("input[type='number']");
             const totalDisplay = document.getElementById("total");
             const avgDisplay = document.getElementById("average");
-    
+
             function calculateSumAndAvg() {
                 let sum = 0, count = 0;
                 numberInputs.forEach(input => {
-                    let val = parseFloat(input.value);
-                    if (!isNaN(val)) {
-                        sum += val;
-                        count++;
+                    // Check if this input's question is marked for inclusion in calculations
+                    const questionDiv = input.closest('.question');
+                    const includeInCalc = questionDiv.dataset.includeInCalculations === 'true';
+                    
+                    if (includeInCalc) {
+                        let val = parseFloat(input.value);
+                        if (!isNaN(val)) {
+                            sum += val;
+                            count++;
+                        }
                     }
                 });
                 let avg = count > 0 ? (sum / count).toFixed(2) : 0;
                 totalDisplay.textContent = `Total: ${sum}`;
                 avgDisplay.textContent = `Average: ${avg}`;
             }
-    
+
             numberInputs.forEach(input => {
                 input.addEventListener("input", calculateSumAndAvg);
             });
