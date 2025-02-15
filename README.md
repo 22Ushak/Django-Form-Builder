@@ -260,16 +260,6 @@ Common Issues:
 4. Push to branch
 5. Create Pull Request
 
-## 📞 Support
 
-For support:
-- Open GitHub issue
-- Email: support@formbuilder.com
-- Documentation: [docs-url]
 
-## 📝 License
-
-This project is licensed under the MIT License.
-
----
-Made with ❤️ by [Your Name]
+Made by Usha
