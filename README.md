@@ -166,38 +166,7 @@ class Response(models.Model):
    - Averages for numeric questions
    - Response statistics
 
-## 🛠️ Development
 
-### Running Tests
-```bash
-python manage.py test
-```
-
-### Code Style
-```bash
-# Install flake8
-pip install flake8
-
-# Run linter
-flake8 .
-```
-
-## 🔐 Security Features
-
-- CSRF protection enabled
-- Form validation
-- SQL injection prevention
-- XSS protection
-- Secure password hashing
-
-## ⚠️ Environment Setup
-
-Create `.env` file in root directory:
-```env
-DEBUG=True
-SECRET_KEY=your-secret-key
-DATABASE_URL=sqlite:///db.sqlite3
-```
 
 ## 📱 Key URLs
 
@@ -208,17 +177,7 @@ DATABASE_URL=sqlite:///db.sqlite3
 - View Responses: `/form/<form_id>/responses/`
 - Admin Panel: `/admin/`
 
-## 🗺️ Future Roadmap
 
-- [ ] User authentication
-- [ ] Form templates
-- [ ] Advanced analytics
-- [ ] API integration
-- [ ] File upload support
-- [ ] Response export feature
-- [ ] Custom styling options
-- [ ] Form duplication
-- [ ] Bulk response import
 
 ## 💡 Best Practices
 
@@ -252,13 +211,6 @@ Common Issues:
    - Verify input formats
    - Test conditional logic
 
-## 👥 Contributing
-
-1. Fork the repository
-2. Create feature branch
-3. Commit changes
-4. Push to branch
-5. Create Pull Request
 
 
 
